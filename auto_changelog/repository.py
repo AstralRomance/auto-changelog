@@ -1,5 +1,7 @@
 import logging
 import re
+
+from attr import attr
 import auto_changelog
 from datetime import date
 from hashlib import sha256
@@ -37,6 +39,7 @@ class GitRepository(RepositoryInterface):
         diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
+        ignore: List[str] = None
     ) -> Changelog:
         locallogger = logging.getLogger("repository.generate_changelog")
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
@@ -79,8 +82,15 @@ class GitRepository(RepositoryInterface):
                 changelog.add_release(*attributes)
 
             attributes = self._extract_note_args(commit)
-            locallogger.debug("Adding commit {} with attributes {}".format(sha, attributes))
-            changelog.add_note(*attributes)
+            
+            if attributes[3]:
+                if ignore:
+                    is_ignored = set(attributes[2].split()) & ignore
+                if not is_ignored:
+                    locallogger.debug("Adding commit {} with attributes {}".format(sha, attributes))
+                    changelog.add_note(*attributes)
+            else:
+                locallogger.debug("Commit {} not contains context {}".format(sha, attributes))
 
         # create the compare url for each release
         releases = changelog.releases
@@ -214,7 +224,6 @@ class GitRepository(RepositoryInterface):
         type_ = scope = description = body_footer = body = footer = ""
         # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
         locallogger = logging.getLogger("repository.parse_logger")
-        locallogger.debug(message.strip())
         match = re.match(r"^(\w+)(\(\w+\))?!?: (.*)(\n\n[\w\W]*)?$", message.strip())
         if match:
             type_, scope, description, body_footer = match.groups(default="")

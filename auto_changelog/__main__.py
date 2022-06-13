@@ -1,7 +1,7 @@
 import os
 import logging
 import auto_changelog
-from typing import Optional
+from typing import Optional, List
 
 import click
 
@@ -75,6 +75,7 @@ def validate_template(ctx, param, value):
     is_flag=True,
     help="set logging level to DEBUG",
 )
+@click.option('--ignore', help='List of separated by comma keywords. Commits with chosen words would be ignored', default=None)
 def main(
     path_repo,
     gitlab,
@@ -95,6 +96,7 @@ def main(
     starting_commit: str,
     stopping_commit: str,
     debug: bool,
+    ignore: str
 ):
     if debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -116,6 +118,8 @@ def main(
         tag_prefix=tag_prefix,
         tag_pattern=tag_pattern,
     )
+    if ignore:
+        ignore = ignore.split(',')
     presenter = MarkdownPresenter(template=template)
     changelog = generate_changelog(
         repository,
@@ -128,6 +132,7 @@ def main(
         diff_url=diff_url,
         starting_commit=starting_commit,
         stopping_commit=stopping_commit,
+        ignore=ignore
     )
 
     if stdout:

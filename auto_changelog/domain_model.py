@@ -228,6 +228,7 @@ class RepositoryInterface(ABC):
         diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
+        ignore: List[str]
     ) -> Changelog:
         raise NotImplementedError
 
