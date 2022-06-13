@@ -1,6 +1,7 @@
    run example: python -m auto_changelog --debug
    --remote=\ `https://github.com/AstralRomance/auto-changelog <https://github.com/AstralRomance/auto-changelog>`__
    --unreleased
+   --ignore=commit,Prevent
 
 Для каких репозиториев применим данный инструмент?
 --------------------------------------------------
