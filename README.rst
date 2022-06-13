@@ -11,7 +11,9 @@
 `https://www.conventionalcommits.org/en/v1.0.0/#summary <https://www.conventionalcommits.org/en/v1.0.0/#summary>`__
 :
 
-   [optional scope]: [optional body] [optional footer(s)]
+   <type>[optional scope]: <description>
+   [optional body]
+   [optional footer(s)]
 
 .. _как-влияет-опция---latest-version-на-алгоритм-выбора-коммитов-в-changelog-:
 
