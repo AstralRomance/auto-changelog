@@ -1,140 +1,39 @@
-Auto Changelog
-==============
+> run example: python -m auto_changelog --debug --remote=https://github.com/AstralRomance/auto-changelog --unreleased
 
-|ci| |pypi| |version| |licence| |black|
+## Для каких репозиториев применим данный инструмент?
+Репозитории, использующие Angular Conventional Style для сообщений в коммитах.
+Сообщение к коммиту должно быть оформлено по следующему паттерну https://www.conventionalcommits.org/en/v1.0.0/#summary :
+><type>[optional scope]: <description>
+[optional body]
+[optional footer(s)]
 
-.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog-ci-test/badges/master/pipeline.svg
-   :target: https://gitlab.com/KeNaCo/auto-changelog-ci-test/commits/master
-   :alt: CI Pipeline
-.. |pypi| image:: https://img.shields.io/pypi/v/auto-changelog
-   :target: https://pypi.org/project/auto-changelog/
-   :alt: PyPI
-.. |version| image:: https://img.shields.io/pypi/pyversions/auto-changelog
-   :alt: PyPI - Python Version
-.. |licence| image:: https://img.shields.io/pypi/l/auto-changelog
-   :alt: PyPI - License
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :alt: Code style - Black
+## Как влияет опция --latest-version на алгоритм выбора коммитов в changelog ?
+При использовании опции, коммиты с типом fix, переданной в качестве аргумента версии, переносятся наверх лога.
 
-A quick script that will generate a changelog for any git repository using `conventional style`_ commit messages.
+## Тест test_option_output проверяет, что ченджлог сохраняется в файл с именем, заданным опцией (output). Чтение файла для проверки (стр.133) не отличается от чтения в предыдущем тесте (стр. 120), где имя файла стандартное. Прокомментируйте, почему тест успешен?
+Для чтения файла используется фикстура `open_changelog`.
+Фикстура возвращает объект открытого файла и закрывает его, в случае любого завершения теста.
 
-Installation
-------------
+## Предложите, по-крайней мере, ещё два теста на работу ченджлоггера (модуль integration_test.py)
 
-Install and update using `pip`_:
+### 1
+Опции `starting-commit` и `stopping-commit` протестированы только по отдельности.
+Тест принимает на вход два кода коммита и проверяет, что все коммиты, попавшие в итоговый лог, находятся между ними (посторонние коммиты игнорируются).
 
-.. code-block:: text
+### 2
+Опция `diff-url` не покрыта тестами.
+В качестве теста можно, например, проверить корректность генерируемой ссылки.
 
-    pip install auto-changelog
+#### 2.1
+В качестве smoke теста можно проверить, генерируется ли ссылка.
 
-or directly from source(via poetry):
+#### 2.2
+Также можно проверить поведение опции при указании нескольких разных репозиториев. Данное поведение не определено в документации.
 
-.. code-block:: text
+### 3
+Добавить в `test_option_tag_pattern` строку со спецсимволами.
 
-    poetry install
-    poetry build
-    pip install dist/*.whl
+## Исправьте код так, чтобы поддержать синтаксис коммитов с обязательным указанием контекста в скобках. Пример: `fix(app)`
+> Можно было бы улучшить реализацию, убрав пустые версии из итогового отчета.
 
-Usage
------
-You can list the command line options by running `auto-changelog --help`:
-
-.. code-block:: text
-
-    Usage: auto-changelog [OPTIONS]
-
-    Options:
-      -p, --path-repo PATH       Path to the repository's root directory 
-                                 [Default: .]
-
-      -t, --title TEXT           The changelog's title [Default: Changelog]
-      -d, --description TEXT     Your project's description
-      -o, --output FILENAME      The place to save the generated changelog
-                                 [Default: CHANGELOG.md]
-
-      -r, --remote TEXT          Specify git remote to use for links
-      -v, --latest-version TEXT  use specified version as latest release
-      -u, --unreleased           Include section for unreleased changes
-      --template TEXT            specify template to use [compact] or a path to a
-                                 custom template, default: compact
-
-      --diff-url TEXT            override url for compares, use {current} and
-                                 {previous} for tags
-
-      --issue-url TEXT           Override url for issues, use {id} for issue id
-      --issue-pattern TEXT       Override regex pattern for issues in commit
-                                 messages. Should contain two groups, original
-                                 match and ID used by issue-url.
-
-      --tag-pattern TEXT         override regex pattern for release tags. By
-                                 default use semver tag names semantic. tag should
-                                 be contain in one group named 'version'.
-
-      --tag-prefix TEXT          prefix used in version tags, default: ""
-      --stdout
-      --tag-pattern TEXT         Override regex pattern for release tags
-      --starting-commit TEXT     Starting commit to use for changelog generation
-      --stopping-commit TEXT     Stopping commit to use for changelog generation
-      --debug                    set logging level to DEBUG
-      --help                     Show this message and exit.
-
-
-A simple example
-----------------
-
-.. image:: example-usage.gif
-   :alt: Example usage of auto-changelog
-
-Contributing
-------------
-
-To setup development environment, you may use `Poetry`_.
-These instructions will assume that you have already `Poetry`_ as well as GNU make locally installed
-on your development computer.
-
-These instructions will assume that you have already poetry (https://python-poetry.org/) locally installed
-on your development computer.
-
-1. Fork the `auto-changelog` repo on GitHub.
-2. Clone your fork locally::
-
-    $ git clone git@github.com:your_name_here/auto-changelog.git
-
-3. Initialize your local development environment of auto-changelog.
-   This will include creating a virtualenv using poetry, installing dependencies and registering git hooks
-   using pre-commit::
-
-    $ cd auto-changelog/
-    $ make init-dev
-
-4. Create a branch for local development::
-
-    $ git checkout -b name-of-your-bugfix-or-feature
-
-   Now you can make your changes locally.
-
-5. When you're done making changes, check that your changes pass linting, formating, and the
-   tests, including testing other Python versions with tox::
-
-    $ make lint         # check style with flake8
-    $ make format       # run autoformat with isort and black
-    $ make test         # run tests quickly with the default Python
-    $ make test-all     # run tests on every Python version with tox
-
-
-6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run 
-   flake8 and black and report if changes have been made or need to be fixed by you::
-
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
-
-7. Submit a pull request through the GitHub website.
-
-
-
-.. _Black: https://black.readthedocs.io/en/stable/
-.. _conventional style: https://www.conventionalcommits.org/en
-.. _pip: https://pip.pypa.io/en/stable/quickstart/
-.. _Poetry: https://poetry.eustace.io/
-.. _Pre-commit: https://pre-commit.com/
+## 

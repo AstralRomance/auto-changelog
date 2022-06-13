@@ -85,7 +85,7 @@ class GitRepository(RepositoryInterface):
             
             if attributes[3]:
                 if ignore:
-                    is_ignored = set(attributes[2].split()) & ignore
+                    is_ignored = set(attributes[2].split()) & set(ignore)
                 if not is_ignored:
                     locallogger.debug("Adding commit {} with attributes {}".format(sha, attributes))
                     changelog.add_note(*attributes)
