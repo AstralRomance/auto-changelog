@@ -6,7 +6,7 @@
 Для каких репозиториев применим данный инструмент?
 --------------------------------------------------
 
-Репозитории, использующие Angular Conventional Style для сообщений в
+Репозитории Github/Gitlab, использующие Angular Conventional Style для сообщений в
 коммитах. Сообщение к коммиту должно быть оформлено по следующему
 паттерну
 `https://www.conventionalcommits.org/en/v1.0.0/#summary <https://www.conventionalcommits.org/en/v1.0.0/#summary>`__
